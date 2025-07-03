@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: time-printer-job
+spec:
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: time-printer
+            image: busybox:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              # Run 6 times, with 10 second intervals
+              for i in $(seq 1 6); do
+                echo "Current time: $(date)"
+                echo "ConfigMap Values:"
+                echo "DB_HOST: ${DB_HOST}"
+                echo "DB_PORT: ${DB_PORT}"
+                echo "Secret Values:"
+                echo "DATABASE_PASSWORD: ${DATABASE_PASSWORD}"
+                echo "API_SECRET: ${API_SECRET}"
+                
+                # Don't sleep after the last iteration
+                if [ $i -lt 6 ]; then
+                  sleep 10
+                fi
+              done
+            env:
+              - name: DB_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: flask-app-config
+                    key: DB_HOST
+              - name: DB_PORT
+                valueFrom:
+                  configMapKeyRef:
+                    name: flask-app-config
+                    key: DB_PORT
+              - name: DATABASE_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: flask-app-secrets
+                    key: DATABASE_PASSWORD
+              - name: API_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: flask-app-secrets
+                    key: API_SECRET
+          restartPolicy: OnFailure

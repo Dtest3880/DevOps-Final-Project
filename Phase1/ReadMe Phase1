@@ -1,0 +1,48 @@
+Crate a python file and rwite the code:
+
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+	return "Hello World!"
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+
+
+create a docker-compose file:
+version: '3.8'
+
+services:
+  flask_app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+
+Create a Docker file:
+
+FROM python:3.11-slim
+# Set the working directory
+WORKDIR /app
+#install  Flask
+RUN pip install --no-cache-dir flask
+COPY . /app
+# Expose the port Flask runs on
+EXPOSE 5000
+# Command to run the Flask app
+CMD ["python", "app.py"]
+
+
+run the folowing comands:
+to create a container and upload to repo:
+docker-compose.exe up  -d
+docker tag finalproject-flask_app davetool1234/final_project:v0.1
+docker push davetool1234/final_project:v0.1
+
+To pull form repo run:
+docker pull davetool1234/final_project:v0.1
+To build the pod run:
+docker -t davetool1234/final_project:v0.1

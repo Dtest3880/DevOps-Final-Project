@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, feature/* ] # מפעיל על הפוש ל-main וענפים שמתחילים ב-feature/
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint flask  # או כל ספריה אחרת שדרושה לך
+
+      - name: Lint with pylint
+        run: |
+          pylint **/*.py
+
+      - name: Run tests
+        run: |
+          # כאן תריץ את הפקודה שלך להרצת הטסטים, למשל:
+          pytest tests/

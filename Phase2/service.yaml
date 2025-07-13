@@ -4,9 +4,24 @@ metadata:
   name: flask-app-service
 spec:
   selector:
-    app: flask-app  
+    app: flask-app
   ports:
     - protocol: TCP
-      port: 80  
-      targetPort: 5000  
-  type: LoadBalancer
+      port: 80
+      targetPort: 5000
+  type: NodePort
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: time-printer-service
+spec:
+  selector:
+    app: time-printer
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 5000
+  type: NodePort

@@ -15,37 +15,37 @@ spec:
       imagePullSecrets:
         - name: regcred
       containers:
-      - name: flask-app
-        image: davetool1234/flask-app:phase1
-        ports:
-        - containerPort: 5000
-        envFrom:
-        - configMapRef:
-            name: flask-app-config
-        env:
-        - name: DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: flask-app-secrets
-              key: DATABASE_PASSWORD
-        - name: API_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: flask-app-secrets
-              key: API_SECRET
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: flask-app
+          image: davetool1234/flask-app:phase1
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: flask-app-config
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flask-app-secrets
+                  key: DATABASE_PASSWORD
+            - name: API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: flask-app-secrets
+                  key: API_SECRET
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
 
 ---
 
@@ -66,20 +66,20 @@ spec:
       imagePullSecrets:
         - name: regcred
       containers:
-      - name: time-printer
-        image: davetool1234/time-printer:phase2
-        ports:
-        - containerPort: 5000
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: time-printer
+          image: davetool1234/time-printer:phase2
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5

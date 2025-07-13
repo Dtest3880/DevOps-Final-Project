@@ -9,7 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -42,7 +41,6 @@ jobs:
       matrix:
         python-version: [3.9, 3.10, 3.11]
     name: Lint with pylint (Python ${{ matrix.python-version }})
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -53,4 +51,29 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip
-        uses: act
+        uses: actions/cache@v3  # <--- שים לב לתיקון כאן
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt') }}-v3
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+          pip3 install pylint
+
+      - name: Run pylint
+        run: |
+          pylint **/*.py
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [build-and-test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify manual deploy
+        run: |
+          echo "✅ CI Passed!"
+          echo "🚀 Please run './deploy.sh' manually on your local Minikube environment."

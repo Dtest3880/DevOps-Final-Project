@@ -66,4 +66,16 @@ jobs:
           pip install -r requirements.txt
           pip install pylint
 
-      - name: Run
+      - name: Run pylint
+        run: |
+          pylint **/*.py
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [build-and-test, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify manual deploy
+        run: |
+          echo "✅ CI Passed!"
+          echo "🚀 Please run './deploy.sh' manually on your local Minikube environment."
